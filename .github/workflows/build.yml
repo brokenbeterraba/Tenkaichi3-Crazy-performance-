@@ -39,7 +39,12 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon assembleRelease
 
+      - name: Procurar APKs
+        run: find . -name "*.apk" | tee apks.txt
+
       - uses: actions/upload-artifact@v4
         with:
           name: DragonRage-apk
-          path: android/app/build/outputs/apk/release/*.apk￼Enter
+          path: |
+            **/*.apk
+            apks.txt
