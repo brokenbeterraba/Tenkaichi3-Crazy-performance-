@@ -1,0 +1,45 @@
+name: build-from-zip
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Extrair o zip
+        run: |
+          unzip -q ./*.zip -d _src
+          cp -a _src/*/. .
+          rm -rf _src
+          ls
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Toolchain do engine
+        run: ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME" sh port/tools/android_toolchain.sh
+
+      - name: Engine
+        env:
+          BT3_SKELETON: "1"
+        run: python3 port/tools/android.py
+
+      - name: Build do APK
+        working-directory: android
+        env:
+          DR_VERSION_NAME: 0.0.0-dev.${{ github.run_number }}
+          DR_VERSION_CODE: ${{ github.run_number }}
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DragonRage-apk
+          path: android/app/build/outputs/apk/release/*.apk￼Enter
