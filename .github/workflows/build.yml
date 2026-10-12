@@ -10,7 +10,7 @@ jobs:
 
       - name: Extrair o zip do codigo-fonte
         run: |
-          ZIP="$(ls -t ./*texture-lod*.zip 2>/dev/null | head -1)"
+          ZIP="$(ls -t ./*stage-distance*.zip 2>/dev/null | head -1)"
           if [ -z "$ZIP" ]; then
             ZIP="$(ls -t ./*.zip 2>/dev/null | head -1)"
           fi
