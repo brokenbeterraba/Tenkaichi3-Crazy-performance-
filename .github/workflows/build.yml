@@ -1,4 +1,4 @@
-name: build-from-zip
+name: build-apk
 on: workflow_dispatch
 
 jobs:
@@ -8,9 +8,20 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Extrair o zip
+      - name: Extrair o zip do codigo-fonte
         run: |
-          unzip -q ./*.zip -d _src
+          ZIP="$(ls -t ./*texture-lod*.zip 2>/dev/null | head -1)"
+          if [ -z "$ZIP" ]; then
+            ZIP="$(ls -t ./*.zip 2>/dev/null | head -1)"
+          fi
+          if [ -z "$ZIP" ]; then
+            echo "ERRO: nenhum zip na raiz do repositorio."
+            ls -la
+            exit 1
+          fi
+          echo "Usando: $ZIP"
+          mkdir _src
+          unzip -q "$ZIP" -d _src
           cp -a _src/*/. .
           rm -rf _src
           ls
@@ -33,7 +44,7 @@ jobs:
       - name: Build do APK
         working-directory: android
         env:
-          DR_VERSION_NAME: 0.0.0-dev.${{ github.run_number }}
+          DR_VERSION_NAME: 0.5.0-dev.${{ github.run_number }}
           DR_VERSION_CODE: ${{ github.run_number }}
         run: |
           chmod +x gradlew
