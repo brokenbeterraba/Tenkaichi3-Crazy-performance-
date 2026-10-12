@@ -10,12 +10,9 @@ jobs:
 
       - name: Extrair o zip do codigo-fonte
         run: |
-          ZIP="$(ls -t ./*-fixed.zip 2>/dev/null | head -1)"
+          ZIP="$(ls -t ./*cpu-optimizations-1.zip 2>/dev/null | head -1)"
           if [ -z "$ZIP" ]; then
-            ZIP="$(ls -t ./*.zip 2>/dev/null | head -1)"
-          fi
-          if [ -z "$ZIP" ]; then
-            echo "ERRO: nenhum zip na raiz do repositorio."
+            echo "ERRO: nao achei o zip '...cpu-optimizations-1.zip' na raiz do repositorio."
             ls -la
             exit 1
           fi
